@@ -37,26 +37,54 @@ def ValidCheck(wordList_py,dstWord_py):
         if not inflag:
             return []
     return idx
-    
 
-if __name__ == "__main__":
-    LoadPinyinDict()
+def PrintValidResult(pinyinSet,oriText,wordList):
+    line = oriText
+    try:
+        dstWord_py =  convertPinyin(line)
+    except:
+        print "Error:%s"%(oriText)
+        return
+    ReplaceRule = ValidCheck(pinyinSet,dstWord_py)
+    if len(ReplaceRule):
+        result = list(line)
+        for replace_idx in ReplaceRule:
+            dst = wordList[replace_idx[0]][replace_idx[1]]
+            src = result[replace_idx[2]]
+            line = line.replace(src,dst)
+        print line,'<<----',oriText
+
+def ReadGushi(filename,pinyinSet,wordList):
+    for (linenum,oriText) in enumerate(open(filename)):
+        oriText = unicode(oriText.replace('\n',''),"utf-8")
+        regexp = "<<(.*)>>:(.*)$"
+        result = re.findall(regexp,oriText)
+        for (title,poet) in result:
+            poet = poet.replace(unicode('，',"utf-8"),'---')
+            poet = poet.replace(unicode('。',"utf-8"),'---')
+            poet = poet.replace(unicode('？',"utf-8"),'---')
+            poet = poet.replace(unicode('、',"utf-8"),'---')
+            poet = poet.replace(unicode('！',"utf-8"),'---')
+            poet = poet.replace(unicode('；',"utf-8"),'---')
+            poet = poet.replace(unicode('：',"utf-8"),'---')
+            poet = poet.replace(unicode(':',"utf-8"),'---')
+            poet = poet.replace(unicode('”',"utf-8"),'---')
+            poet = poet.replace(unicode('“',"utf-8"),'---')
+            poet = poet.split('---')
+            for p in poet:
+                PrintValidResult(pinyinSet,p,wordList)
+
+
+def main():
     wordList = ['范冰冰','李晨']
     wordList = map(lambda x:unicode(x,"utf-8"),wordList)
     pinyinSet = map(lambda x:convertPinyin(x),wordList)
-    
-    for (linunum,oriText) in enumerate(open('chengyu.txt')):
-        oriText = unicode(oriText.replace('\n',''),"utf-8")
-        line = oriText
-        try:
-            dstWord_py =  convertPinyin(line)
-        except:
-            print "Error:%s(%d)"%(oriText,linunum + 1)
-        ReplaceRule = ValidCheck(pinyinSet,dstWord_py)
-        if len(ReplaceRule):
-            result = list(line)
-            for replace_idx in ReplaceRule:
-                dst = wordList[replace_idx[0]][replace_idx[1]]
-                src = result[replace_idx[2]]
-                line = line.replace(src,dst)
-            print line,'<<----',oriText
+    ReadGushi("tangshi.txt",pinyinSet,wordList)
+    #ReadGushi("songci.txt",pinyinSet,wordList)
+    # for (linenum,oriText) in enumerate(open('chengyu.txt')):
+    #     oriText = unicode(oriText.replace('\n',''),"utf-8")
+    #     PrintValidResult(pinyinSet,oriText,wordList)
+
+if __name__ == "__main__":
+    LoadPinyinDict()
+    main()
