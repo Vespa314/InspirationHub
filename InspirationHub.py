@@ -21,9 +21,15 @@ def UniformPinyin(pinyin):
     pinyin, number = re.subn('(.*)ng', r'\1n', pinyin)
     return pinyin
 
+def GetPinyin(word):
+    if pinyin_dict.has_key(word):
+        return pinyin_dict[word][0]
+    else:
+        return "-"
+
 def convertPinyin(word):
-    word = word.replace(",","")
-    return map(lambda x:UniformPinyin(pinyin_dict[x][0]),word)
+    # word = word.replace(",","")
+    return map(lambda x:UniformPinyin(GetPinyin(x)),word)
 
 def ValidCheck(wordList_py,dstWord_py):
     idx = []
@@ -79,11 +85,11 @@ def main():
     wordList = ['范冰冰','李晨']
     wordList = map(lambda x:unicode(x,"utf-8"),wordList)
     pinyinSet = map(lambda x:convertPinyin(x),wordList)
-    ReadGushi("tangshi.txt",pinyinSet,wordList)
+    # ReadGushi("tangshi.txt",pinyinSet,wordList)
     #ReadGushi("songci.txt",pinyinSet,wordList)
-    # for (linenum,oriText) in enumerate(open('chengyu.txt')):
-    #     oriText = unicode(oriText.replace('\n',''),"utf-8")
-    #     PrintValidResult(pinyinSet,oriText,wordList)
+    for (linenum,oriText) in enumerate(open('chengyu.txt')):
+        oriText = unicode(oriText.replace('\n',''),"utf-8")
+        PrintValidResult(pinyinSet,oriText,wordList)
 
 if __name__ == "__main__":
     LoadPinyinDict()
