@@ -6,7 +6,7 @@ Created on Mon Jun 01 19:47:26 2015
 """
 
 import re
-
+import sys
 pinyin_dict = {}
 
 def LoadPinyinDict():
@@ -81,8 +81,8 @@ def ReadGushi(filename,pinyinSet,wordList):
                 PrintValidResult(pinyinSet,p,wordList)
 
 
-def main():
-    wordList = ['范冰冰','李晨']
+def main(argv1,argv2):
+    wordList = [argv1,argv2]
     wordList = map(lambda x:unicode(x,"utf-8"),wordList)
     pinyinSet = map(lambda x:convertPinyin(x),wordList)
     # ReadGushi("tangshi.txt",pinyinSet,wordList)
@@ -92,5 +92,8 @@ def main():
         PrintValidResult(pinyinSet,oriText,wordList)
 
 if __name__ == "__main__":
-    LoadPinyinDict()
-    main()
+    if len(sys.argv) != 3:
+        print "python InspirationHub.py input1 input2"
+    else:
+        LoadPinyinDict()
+        main(sys.argv[1],sys.argv[2])
